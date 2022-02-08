@@ -59,6 +59,7 @@ def output_fn(prediction_output, accept):
 
 def predict_fn(input_data, model):
     print('Inferring sentiment of input data.')
+    # input_data = (len, review[500])
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
@@ -72,6 +73,11 @@ def predict_fn(input_data, model):
 
     data_X = None
     data_len = None
+    
+    # Solution
+    input_data_len = input_data[0]
+    input_data_X = input_data[1:]
+    data_X, data_len = convert_and_pad(model.word_dict, review_to_words(input_data_X))
 
     # Using data_X and data_len we construct an appropriate input tensor. Remember
     # that our model expects input data of the form 'len, review[500]'.
@@ -88,5 +94,7 @@ def predict_fn(input_data, model):
     #       be a numpy array which contains a single integer which is either 1 or 0
 
     result = None
+    # Solution
+    result = int(round(float(model.forward(data))))
 
     return result
